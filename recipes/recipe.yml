@@ -6,8 +6,8 @@ name: mrrobot-custom-fedora-sway
 description: This is my personal OS image.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 42 # latest is also supported if you want new updates ASAP
+base-image: quay.io/fedora-ostree-desktops/sericea
+image-version: 43
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
@@ -19,18 +19,45 @@ modules:
 
   - type: dnf
     repos:
+      files:
+        - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
       copr:
         - atim/starship
+        - pgdev/ghostty
+        - netbird/client
     install:
       packages:
+        # Terra repo setup (must come first)
+        - terra-release
+        # Editors & Shell
+        - zed
         - micro
         - starship
+        - ghostty
+        - neovim
+        - git
+        # VPN/Network
+        - netbird
+        - wireguard-tools
+        # Containers
+        - distrobox
+        - podman
+        # YubiKey support
+        - yubikey-manager
+        - gnupg2-scdaemon
+        - libatomic
+        - pcsc-lite
+        - pcsc-lite-ccid
+        - pam-u2f
+        - libfido2
     remove:
       packages:
         # example: removing firefox (in favor of the flatpak)
         # "firefox" is the main package, "firefox-langpacks" is a dependency
         - firefox
         - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+        - opensc
+        - opensc-libs
 
   - type: default-flatpaks
     configurations:
@@ -38,8 +65,11 @@ modules:
         scope: system
         # If no repo information is specified, Flathub will be used by default
         install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
-          - org.gnome.Loupe
+          - md.obsidian.Obsidian
+          - com.brave.Browser
+          - io.github.ArmandAgopian.zen-browser
+          - com.bitwarden.desktop
+          - com.protonvpn.www
       - scope: user # Also add Flathub user repo, but no user packages
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
