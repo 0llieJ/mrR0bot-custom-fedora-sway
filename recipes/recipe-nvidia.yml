@@ -1,0 +1,60 @@
+  # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+  name: mrrobot-custom-fedora-sway-nvidia
+  description: Personal OS image - Nvidia
+
+  base-image: ghcr.io/wayblueorg/sway-nvidia-open
+  image-version: latest
+
+  modules:
+    - type: files
+      files:
+        - source: system
+          destination: /
+
+    - type: dnf
+      repos:
+        files:
+          - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
+        copr:
+          - atim/starship
+          - pgdev/ghostty
+          - netbird/client
+      install:
+        packages:
+          - terra-release
+          - zed
+          - micro
+          - starship
+          - ghostty
+          - neovim
+          - git
+          - netbird
+          - wireguard-tools
+          - podman
+          - yubikey-manager
+          - gnupg2-scdaemon
+          - libatomic
+          - pcsc-lite
+          - pcsc-lite-ccid
+          - pam-u2f
+          - libfido2
+      remove:
+        packages:
+          - firefox
+          - firefox-langpacks
+          - opensc
+          - opensc-libs
+
+    - type: default-flatpaks
+      configurations:
+        - notify: true
+          scope: system
+          install:
+            - md.obsidian.Obsidian
+            - com.brave.Browser
+            - io.github.ArmandAgopian.zen-browser
+            - com.bitwarden.desktop
+            - com.protonvpn.www
+        - scope: user
+
+    - type: signing
