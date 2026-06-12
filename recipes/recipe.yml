@@ -3,7 +3,9 @@
 name: mrrobot-custom-fedora-sway
 description: Personal OS image - standard
 base-image: ghcr.io/wayblueorg/sway
-image-version: latest
+# Pinned to Fedora 44: COPR/Terra packages are built per-release, so bumping
+# this needs re-verifying every package builds for the new release first.
+image-version: "44"
 modules:
   - type: files
     files:
@@ -16,9 +18,11 @@ modules:
       copr:
         - atim/starship
         - scottames/ghostty
+        - swayfx/swayfx
+        - wezfurlong/wezterm-nightly
     install:
       packages:
-        # --- repos / editors / shell -----------------------------------------
+        # --- repos / editors -------------------------------------------------
         - terra-release
         - zed
         - micro
@@ -26,6 +30,12 @@ modules:
         - ghostty
         - neovim
         - git
+        # --- compositor (SwayFX: rounded corners, blur, shadows over Sway) ----
+        - swayfx
+        # --- terminals & shells ----------------------------------------------
+        - wezterm
+        - zsh
+        - nushell
         # --- launcher (native Wayland) ---------------------------------------
         # fuzzel is a wlroots-native launcher (rofi-wayland isn't built for F44).
         # Noctalia also ships its own launcher.
@@ -52,6 +62,12 @@ modules:
         - tumbler
         - gvfs
         - udisks2
+        # --- utilities & power -----------------------------------------------
+        - 7zip
+        - power-profiles-daemon
+        # --- terminal fun ----------------------------------------------------
+        - cowsay
+        - cbonsai
         # --- fonts (Nerd Fonts come from install-nerdfonts.sh) ----------------
         - fira-code-fonts
         - jetbrains-mono-fonts
@@ -73,6 +89,7 @@ modules:
         - gnome-keyring
         # --- hardware --------------------------------------------------------
         - solaar
+        - logiops
         # --- smartcard / yubikey ---------------------------------------------
         - yubikey-manager
         - gnupg2-scdaemon
@@ -92,6 +109,7 @@ modules:
     scripts:
       - install-netbird.sh
       - install-helium.sh
+      - install-waveterm.sh
       - install-nerdfonts.sh
       - install-noctalia.sh
       - install-unix-setup.sh
