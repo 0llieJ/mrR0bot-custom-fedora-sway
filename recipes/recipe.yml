@@ -9,6 +9,9 @@ modules:
     files:
       - source: system
         destination: /
+  - type: script
+    scripts:
+      - install-netbird.sh
   - type: dnf
     repos:
       files:
