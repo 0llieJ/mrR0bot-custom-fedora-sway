@@ -25,7 +25,7 @@ section() { printf "\n${b}== %s ==${n}\n" "$1"; }
 #   label:command   (label shown, command actually tested)
 # ------------------------------------------------------------------------------
 SYS_CMDS=(
-  "SwayFX:swayfx" "Waybar:waybar" "Mako:mako" "Fuzzel:fuzzel"
+  "SwayFX(sway):sway" "Waybar:waybar" "Mako:mako" "Fuzzel:fuzzel"
   "swaylock:swaylock" "swayidle:swayidle" "swaybg:swaybg" "kanshi:kanshi"
   "grim:grim" "slurp:slurp" "Flameshot:flameshot" "brightnessctl:brightnessctl"
   "playerctl:playerctl" "pamixer:pamixer" "wl-copy:wl-copy" "Thunar:thunar"
