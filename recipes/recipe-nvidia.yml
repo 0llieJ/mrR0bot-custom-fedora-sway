@@ -36,6 +36,8 @@ modules:
         - wezterm
         - zsh
         - nushell
+        # --- desktop shell ---------------------------------------------------
+        - noctalia-shell        # Noctalia (+noctalia-qs runtime), from Terra
         # --- launcher (native Wayland) ---------------------------------------
         - fuzzel
         # --- Sway ecosystem (most ship in the WayBlue base; layered to be sure)
@@ -121,7 +123,6 @@ modules:
       - install-helium.sh
       - install-waveterm.sh
       - install-nerdfonts.sh
-      - install-noctalia.sh
       - install-unix-setup.sh
   - type: default-flatpaks
     configurations:

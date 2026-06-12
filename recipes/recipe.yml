@@ -36,6 +36,8 @@ modules:
         - wezterm
         - zsh
         - nushell
+        # --- desktop shell ---------------------------------------------------
+        - noctalia-shell        # Noctalia (+noctalia-qs runtime), from Terra
         # --- launcher (native Wayland) ---------------------------------------
         # fuzzel is a wlroots-native launcher (rofi-wayland isn't built for F44).
         # Noctalia also ships its own launcher.
@@ -122,7 +124,6 @@ modules:
       - install-helium.sh
       - install-waveterm.sh
       - install-nerdfonts.sh
-      - install-noctalia.sh
       - install-unix-setup.sh
   - type: default-flatpaks
     configurations:
