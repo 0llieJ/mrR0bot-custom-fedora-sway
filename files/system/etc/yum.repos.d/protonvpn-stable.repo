@@ -1,0 +1,14 @@
+#
+# ProtonVPN stable release
+# Baked directly (instead of via the versioned protonvpn-stable-release rpm) so
+# there is no hardcoded version to break, and proton-vpn-cli always resolves to
+# the latest from this repo. $releasever keeps it working across Fedora bumps.
+#
+[protonvpn-stable]
+name = ProtonVPN Fedora Stable repository
+baseurl = https://repo.protonvpn.com/fedora-$releasever-stable
+enabled = 1
+gpgcheck = 1
+repo_gpgcheck = 0
+skip_if_unavailable = true
+gpgkey = https://repo.protonvpn.com/fedora-$releasever-stable/public_key.asc

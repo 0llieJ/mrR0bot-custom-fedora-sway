@@ -30,8 +30,8 @@ modules:
         - ghostty
         - neovim
         - git
-        # --- compositor (SwayFX: rounded corners, blur, shadows over Sway) ----
-        - swayfx
+        # SwayFX replaces the base 'sway' package — see the 'replace:' block below
+        # (swayfx Provides/Conflicts sway, so it can't just be added alongside).
         # --- terminals & shells ----------------------------------------------
         - wezterm
         - zsh
@@ -102,6 +102,15 @@ modules:
         - firefox-langpacks
         - opensc
         - opensc-libs
+    # Swap the base WayBlue 'sway' for 'swayfx' (rounded corners/blur/shadows).
+    # swayfx Provides sway, so dependents stay satisfied; allow-erasing lets it
+    # remove the conflicting base sway package.
+    replace:
+      - from-repo: copr:copr.fedorainfracloud.org:swayfx:swayfx
+        allow-erasing: true
+        packages:
+          - old: sway
+            new: swayfx
   # Scripts run AFTER dnf so git + the Terra repo (terra-release) are available.
   # NetBird is installed by script (its rpm %post broke the image build).
   - type: script
@@ -124,7 +133,6 @@ modules:
           - md.obsidian.Obsidian
           - org.signal.Signal
           - org.localsend.localsend_app
-          - com.protonvpn.www
           - org.cryptomator.Cryptomator
           - ch.protonmail.protonmail-bridge
           - one.flipperzero.qFlipper
