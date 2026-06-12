@@ -67,6 +67,8 @@ modules:
         # --- terminal fun ----------------------------------------------------
         - cowsay
         - cbonsai
+        - proxychains-ng
+        - asciiquarium
         # --- fonts (Nerd Fonts come from install-nerdfonts.sh) ----------------
         - fira-code-fonts
         - jetbrains-mono-fonts
