@@ -36,23 +36,32 @@ modules:
         - wezterm
         - zsh
         - nushell
-        # --- desktop shell ---------------------------------------------------
+        # ====================================================================
+        # DESKTOP SHELL — choose ONE at runtime (both installed; switch via your
+        # Sway config, not here):
+        #   OPTION A (default): Noctalia — own bar/notifications/launcher/lock.
+        #     Autostart ONLY Noctalia; don't also start waybar/mako/fuzzel.
+        #   OPTION B: classic Sway stack (waybar+mako+fuzzel+swaylock) if not
+        #     using Noctalia.
+        # No package conflict; only autostarting both conflicts (your config).
+        # ====================================================================
+        # -- Option A: Noctalia shell --
         - noctalia-shell        # Noctalia (+noctalia-qs runtime), from Terra
-        # --- launcher (native Wayland) ---------------------------------------
-        - fuzzel
-        # --- Sway ecosystem (most ship in the WayBlue base; layered to be sure)
-        - waybar
-        - mako
-        - swaylock
-        - swayidle
-        - swaybg
-        - kanshi
+        # -- Option B: classic Sway shell pieces (Noctalia replaces these) --
+        - waybar                #   status bar        (Noctalia replaces)
+        - mako                  #   notifications     (Noctalia replaces)
+        - fuzzel                #   app launcher      (Noctalia replaces)
+        - swaylock              #   screen locker     (Noctalia replaces)
+        # --- low-level helpers Noctalia does NOT replace (keep for both) ------
+        - swayidle              # idle detection -> triggers the lock screen
+        - swaybg                # wallpaper
+        - kanshi                # display/output config
         - grim
         - slurp
         - flameshot
-        - brightnessctl
-        - playerctl
-        - pamixer
+        - brightnessctl         # backend for Noctalia's brightness slider
+        - playerctl             # backend for Noctalia's media controls
+        - pamixer               # backend for Noctalia's volume slider
         - wl-clipboard
         - network-manager-applet
         - blueman

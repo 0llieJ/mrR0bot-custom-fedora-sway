@@ -36,25 +36,38 @@ modules:
         - wezterm
         - zsh
         - nushell
-        # --- desktop shell ---------------------------------------------------
+        # ====================================================================
+        # DESKTOP SHELL — choose ONE at runtime (both are installed so you can
+        # switch freely; the choice is made in your Sway config, not here):
+        #
+        #   OPTION A (default): Noctalia — its own bar, notifications, launcher,
+        #     and lock screen. Your Sway config should autostart ONLY Noctalia
+        #     (exec qs/noctalia-qs -c noctalia-shell) and NOT waybar/mako/fuzzel.
+        #
+        #   OPTION B: the classic Sway stack below (waybar + mako + fuzzel +
+        #     swaylock). Use this if you DON'T run Noctalia — autostart waybar,
+        #     run mako, bind fuzzel, and use swaylock for locking.
+        #
+        # They don't conflict as packages; the only "conflict" is autostarting
+        # both (double bar/notifications), which your Sway config controls.
+        # ====================================================================
+        # -- Option A: Noctalia shell --
         - noctalia-shell        # Noctalia (+noctalia-qs runtime), from Terra
-        # --- launcher (native Wayland) ---------------------------------------
-        # fuzzel is a wlroots-native launcher (rofi-wayland isn't built for F44).
-        # Noctalia also ships its own launcher.
-        - fuzzel
-        # --- Sway ecosystem (most ship in the WayBlue base; layered to be sure)
-        - waybar
-        - mako
-        - swaylock
-        - swayidle
-        - swaybg
-        - kanshi
+        # -- Option B: classic Sway shell pieces (Noctalia replaces these) --
+        - waybar                #   status bar        (Noctalia replaces)
+        - mako                  #   notifications     (Noctalia replaces)
+        - fuzzel                #   app launcher      (Noctalia replaces)
+        - swaylock              #   screen locker     (Noctalia replaces)
+        # --- low-level helpers Noctalia does NOT replace (keep for both) ------
+        - swayidle              # idle detection -> triggers the lock screen
+        - swaybg                # wallpaper
+        - kanshi                # display/output config
         - grim
         - slurp
         - flameshot
-        - brightnessctl
-        - playerctl
-        - pamixer
+        - brightnessctl         # backend for Noctalia's brightness slider
+        - playerctl             # backend for Noctalia's media controls
+        - pamixer               # backend for Noctalia's volume slider
         - wl-clipboard
         - network-manager-applet
         - blueman
