@@ -15,7 +15,7 @@ modules:
         - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
       copr:
         - atim/starship
-        - pgdev/ghostty
+        - scottames/ghostty
         - netbird/client
     install:
       packages:
