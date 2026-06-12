@@ -1,59 +1,125 @@
-  # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-  name: mrrobot-custom-fedora-sway-nvidia
-  description: Personal OS image - Nvidia
-
-  base-image: ghcr.io/wayblueorg/sway-nvidia-open
-  image-version: latest
-
-  modules:
-    - type: files
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+name: mrrobot-custom-fedora-sway-nvidia
+description: Personal OS image - Nvidia
+base-image: ghcr.io/wayblueorg/sway-nvidia-open
+image-version: latest
+modules:
+  - type: files
+    files:
+      - source: system
+        destination: /
+  - type: dnf
+    repos:
       files:
-        - source: system
-          destination: /
-
-    - type: dnf
-      repos:
-        files:
-          - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
-        copr:
-          - atim/starship
-          - scottames/ghostty
-      install:
-        packages:
-          - terra-release
-          - zed
-          - micro
-          - starship
-          - ghostty
-          - neovim
-          - git
-          - netbird
-          - wireguard-tools
-          - podman
-          - yubikey-manager
-          - gnupg2-scdaemon
-          - libatomic
-          - pcsc-lite
-          - pcsc-lite-ccid
-          - pam-u2f
-          - libfido2
-      remove:
-        packages:
-          - firefox
-          - firefox-langpacks
-          - opensc
-          - opensc-libs
-
-    - type: default-flatpaks
-      configurations:
-        - notify: true
-          scope: system
-          install:
-            - md.obsidian.Obsidian
-            - com.brave.Browser
-            - io.github.ArmandAgopian.zen-browser
-            - com.bitwarden.desktop
-            - com.protonvpn.www
-        - scope: user
-
-    - type: signing
+        - https://github.com/terrapkg/subatomic-repos/raw/main/terra.repo
+      copr:
+        - atim/starship
+        - scottames/ghostty
+    install:
+      packages:
+        # --- repos / editors / shell -----------------------------------------
+        - terra-release
+        - zed
+        - micro
+        - starship
+        - ghostty
+        - neovim
+        - git
+        # --- launcher (native Wayland) ---------------------------------------
+        - fuzzel
+        # --- Sway ecosystem (most ship in the WayBlue base; layered to be sure)
+        - waybar
+        - mako
+        - swaylock
+        - swayidle
+        - swaybg
+        - kanshi
+        - grim
+        - slurp
+        - flameshot
+        - brightnessctl
+        - playerctl
+        - pamixer
+        - wl-clipboard
+        - network-manager-applet
+        - blueman
+        # --- file manager ----------------------------------------------------
+        - thunar
+        - thunar-volman
+        - tumbler
+        - gvfs
+        - udisks2
+        # --- fonts (Nerd Fonts come from install-nerdfonts.sh) ----------------
+        - fira-code-fonts
+        - jetbrains-mono-fonts
+        - fontawesome-6-free-fonts
+        # --- containers ------------------------------------------------------
+        - podman
+        - podman-compose
+        - distrobox
+        # --- virtualization --------------------------------------------------
+        - libvirt
+        - virt-manager
+        - virt-viewer
+        - qemu-kvm
+        # --- security / VPN --------------------------------------------------
+        - wireguard-tools
+        - clamav
+        - clamav-freshclam
+        - pass
+        - gnome-keyring
+        # --- hardware --------------------------------------------------------
+        - solaar
+        # --- smartcard / yubikey ---------------------------------------------
+        - yubikey-manager
+        - gnupg2-scdaemon
+        - libatomic
+        - pcsc-lite
+        - pcsc-lite-ccid
+        - pam-u2f
+        - libfido2
+    remove:
+      packages:
+        - firefox
+        - firefox-langpacks
+        - opensc
+        - opensc-libs
+  # Scripts run AFTER dnf so git + the Terra repo (terra-release) are available.
+  # NetBird is installed by script (its rpm %post broke the image build).
+  - type: script
+    scripts:
+      - install-netbird.sh
+      - install-helium.sh
+      - install-nerdfonts.sh
+      - install-noctalia.sh
+      - install-unix-setup.sh
+  - type: default-flatpaks
+    configurations:
+      - notify: true
+        scope: system
+        install:
+          - com.brave.Browser
+          - app.zen_browser.zen
+          - com.bitwarden.desktop
+          - org.keepassxc.KeePassXC
+          - md.obsidian.Obsidian
+          - org.signal.Signal
+          - org.localsend.localsend_app
+          - com.protonvpn.www
+          - org.cryptomator.Cryptomator
+          - ch.protonmail.protonmail-bridge
+          - one.flipperzero.qFlipper
+          - com.spotify.Client
+          - org.videolan.VLC
+          - com.calibre_ebook.calibre
+          - io.github.flattool.Warehouse
+          - com.github.tchx84.Flatseal
+      - scope: user
+  - type: systemd
+    system:
+      enabled:
+        - libvirtd.service
+        - clamav-freshclam.service
+        - fstrim.timer
+  - type: signing

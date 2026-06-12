@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# mrrobot-setup — first-login user-layer bootstrap
+# ==============================================================================
+# The image (Bluebuild) provides the whole system layer. This runs the per-user
+# layer that can't be baked into an image — it needs your identity and secrets:
+#
+#   • SSH key generation + GitHub prompt
+#   • dotfiles via chezmoi (clone + apply)
+#   • mise tools and language runtimes
+#   • Homebrew formulae
+#   • Claude Code CLI
+#   • Proton Drive rclone mount
+#   • web-app launchers + the update-all command
+#
+# It runs the unix_setup repo that was BAKED INTO THE IMAGE at build time
+# (/usr/share/mrrobot/unix_setup, immutable branch frozen at one commit), so
+# there is no network clone and no drift. unix_setup's system modules skip
+# themselves automatically on an atomic system.
+#
+# Run once after your first login:  mrrobot-setup
+# Re-run any time to re-apply dotfiles and update user tools.
+# ==============================================================================
+set -euo pipefail
+
+SRC="/usr/share/mrrobot/unix_setup"
+
+if [[ "$EUID" -eq 0 ]]; then
+    echo "Run mrrobot-setup as your normal user, not with sudo." >&2
+    exit 1
+fi
+
+if [[ ! -f "$SRC/setup.sh" ]]; then
+    echo "Baked unix_setup not found at $SRC" >&2
+    echo "The image may have been built without install-unix-setup.sh." >&2
+    exit 1
+fi
+
+if [[ -r /usr/share/mrrobot/unix_setup.commit ]]; then
+    echo "==> Running baked unix_setup (commit $(cat /usr/share/mrrobot/unix_setup.commit))"
+fi
+
+# /usr is read-only at runtime; setup.sh only reads from its own dir and writes
+# into $HOME, so running it in place is fine.
+exec bash "$SRC/setup.sh" "$@"

@@ -9,9 +9,6 @@ modules:
     files:
       - source: system
         destination: /
-  - type: script
-    scripts:
-      - install-netbird.sh
   - type: dnf
     repos:
       files:
@@ -21,6 +18,7 @@ modules:
         - scottames/ghostty
     install:
       packages:
+        # --- repos / editors / shell -----------------------------------------
         - terra-release
         - zed
         - micro
@@ -28,8 +26,54 @@ modules:
         - ghostty
         - neovim
         - git
-        - wireguard-tools
+        # --- launcher (native Wayland) ---------------------------------------
+        # fuzzel is a wlroots-native launcher (rofi-wayland isn't built for F44).
+        # Noctalia also ships its own launcher.
+        - fuzzel
+        # --- Sway ecosystem (most ship in the WayBlue base; layered to be sure)
+        - waybar
+        - mako
+        - swaylock
+        - swayidle
+        - swaybg
+        - kanshi
+        - grim
+        - slurp
+        - flameshot
+        - brightnessctl
+        - playerctl
+        - pamixer
+        - wl-clipboard
+        - network-manager-applet
+        - blueman
+        # --- file manager ----------------------------------------------------
+        - thunar
+        - thunar-volman
+        - tumbler
+        - gvfs
+        - udisks2
+        # --- fonts (Nerd Fonts come from install-nerdfonts.sh) ----------------
+        - fira-code-fonts
+        - jetbrains-mono-fonts
+        - fontawesome-6-free-fonts
+        # --- containers ------------------------------------------------------
         - podman
+        - podman-compose
+        - distrobox
+        # --- virtualization --------------------------------------------------
+        - libvirt
+        - virt-manager
+        - virt-viewer
+        - qemu-kvm
+        # --- security / VPN --------------------------------------------------
+        - wireguard-tools
+        - clamav
+        - clamav-freshclam
+        - pass
+        - gnome-keyring
+        # --- hardware --------------------------------------------------------
+        - solaar
+        # --- smartcard / yubikey ---------------------------------------------
         - yubikey-manager
         - gnupg2-scdaemon
         - libatomic
@@ -43,15 +87,48 @@ modules:
         - firefox-langpacks
         - opensc
         - opensc-libs
+  # Scripts run AFTER dnf so git + the Terra repo (terra-release) are available.
+  - type: script
+    scripts:
+      - install-netbird.sh
+      - install-helium.sh
+      - install-nerdfonts.sh
+      - install-noctalia.sh
+      - install-unix-setup.sh
   - type: default-flatpaks
     configurations:
       - notify: true
         scope: system
         install:
-          - md.obsidian.Obsidian
+          # browsers
           - com.brave.Browser
-          - io.github.ArmandAgopian.zen-browser
+          - app.zen_browser.zen
+          # password managers
           - com.bitwarden.desktop
+          - org.keepassxc.KeePassXC
+          # notes / productivity
+          - md.obsidian.Obsidian
+          # communication / sharing
+          - org.signal.Signal
+          - org.localsend.localsend_app
+          # security / vpn
           - com.protonvpn.www
+          - org.cryptomator.Cryptomator
+          - ch.protonmail.protonmail-bridge
+          # hardware
+          - one.flipperzero.qFlipper
+          # media
+          - com.spotify.Client
+          - org.videolan.VLC
+          - com.calibre_ebook.calibre
+          # flatpak management
+          - io.github.flattool.Warehouse
+          - com.github.tchx84.Flatseal
       - scope: user
+  - type: systemd
+    system:
+      enabled:
+        - libvirtd.service
+        - clamav-freshclam.service
+        - fstrim.timer
   - type: signing
