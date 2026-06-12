@@ -64,7 +64,6 @@ modules:
         - udisks2
         # --- utilities & power -----------------------------------------------
         - 7zip
-        - power-profiles-daemon
         # --- terminal fun ----------------------------------------------------
         - cowsay
         - cbonsai
