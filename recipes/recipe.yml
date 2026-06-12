@@ -28,7 +28,6 @@ modules:
         - ghostty
         - neovim
         - git
-        - netbird
         - wireguard-tools
         - podman
         - yubikey-manager
