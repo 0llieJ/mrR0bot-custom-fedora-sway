@@ -1,0 +1,2 @@
+# Show asterisks while typing a sudo password (unix_setup parity).
+Defaults pwfeedback

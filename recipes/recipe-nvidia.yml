@@ -150,4 +150,5 @@ modules:
         - libvirtd.service
         - clamav-freshclam.service
         - fstrim.timer
+        - mrrobot-firewall.service
   - type: signing

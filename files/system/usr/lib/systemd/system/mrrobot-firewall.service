@@ -1,0 +1,22 @@
+[Unit]
+Description=Apply mrrobot firewall rules (LocalSend)
+# firewalld must be up so --permanent + --reload work against it.
+After=firewalld.service
+Wants=firewalld.service
+# Run once; the marker stops it re-running every boot. Delete the marker to
+# re-apply (e.g. after changing the rules).
+ConditionPathExists=!/var/lib/mrrobot/firewall.done
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/usr/bin/mkdir -p /var/lib/mrrobot
+# LocalSend only: TCP 53317 transfer + UDP 53317 multicast discovery, so the
+# baked-in LocalSend flatpak can receive. SSH is intentionally NOT opened.
+ExecStart=/usr/bin/firewall-cmd --permanent --add-port=53317/tcp
+ExecStart=/usr/bin/firewall-cmd --permanent --add-port=53317/udp
+ExecStart=/usr/bin/firewall-cmd --reload
+ExecStart=/usr/bin/touch /var/lib/mrrobot/firewall.done
+
+[Install]
+WantedBy=multi-user.target
