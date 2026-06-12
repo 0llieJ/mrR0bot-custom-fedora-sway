@@ -116,6 +116,7 @@ modules:
   - type: script
     scripts:
       - install-netbird.sh
+      - install-protonvpn-cli.sh
       - install-helium.sh
       - install-waveterm.sh
       - install-nerdfonts.sh
