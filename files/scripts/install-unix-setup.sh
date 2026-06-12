@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
-# Bake the unix_setup repo (immutable branch) into the image at build time so the
-# user-layer bootstrap is fully self-contained: no runtime git clone, and no
-# drift between the image and a moving branch — the build freezes one commit.
+# Bake the unix_setup repo into the image at build time so the user-layer
+# bootstrap is fully self-contained: no runtime git clone, and the build freezes
+# one commit. Atomic-specific behaviour is runtime-guarded in unix_setup, so the
+# single main branch works on the image.
 #
 # mrrobot-setup runs this baked copy. Override the source/ref if needed:
 #   UNIX_SETUP_REPO, UNIX_SETUP_REF
 set -euxo pipefail
 
 REPO="${UNIX_SETUP_REPO:-https://github.com/0llieJ/unix_setup.git}"
-REF="${UNIX_SETUP_REF:-immutable}"
+# Single branch now: atomic-specific behaviour is runtime-guarded in unix_setup,
+# so main works on the image. Pin to a tag here for full reproducibility if wanted.
+REF="${UNIX_SETUP_REF:-main}"
 DEST="/usr/share/mrrobot/unix_setup"
 
 mkdir -p /usr/share/mrrobot
