@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# mrrobot-verify — coverage check: is anything from unix_setup missing?
+# ==============================================================================
+# Run this on the BOOTED image. It checks the commands, system services, and
+# Flatpaks that the unix_setup system layer expects to be present, and reports
+# OK / MISSING for each. User-layer tools (mise/brew/chezmoi) only appear after
+# you've run `mrrobot-setup`, so they're checked in a separate section.
+#
+# Exit code is non-zero if anything in the SYSTEM layer is missing.
+# ==============================================================================
+
+g=$'\e[32m'; r=$'\e[31m'; y=$'\e[33m'; b=$'\e[1m'; n=$'\e[0m'
+missing_system=0
+
+have_cmd() { command -v "$1" >/dev/null 2>&1; }
+check() { # <label> <test-result(0/1)>
+    if [ "$2" -eq 0 ]; then printf "  ${g}OK${n}    %s\n" "$1"
+    else printf "  ${r}MISSING${n} %s\n" "$1"; fi
+}
+section() { printf "\n${b}== %s ==${n}\n" "$1"; }
+
+# ------------------------------------------------------------------------------
+# System commands (baked into the image)
+#   label:command   (label shown, command actually tested)
+# ------------------------------------------------------------------------------
+SYS_CMDS=(
+  "SwayFX:swayfx" "Waybar:waybar" "Mako:mako" "Fuzzel:fuzzel"
+  "swaylock:swaylock" "swayidle:swayidle" "swaybg:swaybg" "kanshi:kanshi"
+  "grim:grim" "slurp:slurp" "Flameshot:flameshot" "brightnessctl:brightnessctl"
+  "playerctl:playerctl" "pamixer:pamixer" "wl-copy:wl-copy" "Thunar:thunar"
+  "Noctalia(qs):noctalia-qs" "Ghostty:ghostty" "WezTerm:wezterm" "Zed:zed"
+  "micro:micro" "Neovim:nvim" "zsh:zsh" "Nushell:nu" "Starship:starship" "git:git"
+  "Podman:podman" "podman-compose:podman-compose" "Distrobox:distrobox"
+  "virt-manager:virt-manager" "ClamAV:clamscan" "freshclam:freshclam"
+  "WireGuard:wg" "NetBird:netbird" "ProtonVPN CLI:protonvpn"
+  "Helium:helium" "Wave Terminal:waveterm" "Solaar:solaar" "logid:logid"
+  "pass:pass" "GnuPG:gpg" "YubiKey mgr:ykman" "7zip:7z" "cowsay:cowsay" "cbonsai:cbonsai"
+)
+section "System commands"
+for entry in "${SYS_CMDS[@]}"; do
+  label="${entry%%:*}"; cmd="${entry##*:}"
+  if have_cmd "$cmd"; then check "$label" 0; else check "$label ($cmd)" 1; missing_system=$((missing_system+1)); fi
+done
+
+# ------------------------------------------------------------------------------
+# System services / units
+# ------------------------------------------------------------------------------
+SERVICES=(
+  libvirtd.service clamav-freshclam.service fstrim.timer
+  NetworkManager.service bluetooth.service
+  me.proton.vpn.split_tunneling.service netbird.service
+)
+section "System services (enabled?)"
+for u in "${SERVICES[@]}"; do
+  if systemctl list-unit-files "$u" >/dev/null 2>&1 && systemctl is-enabled "$u" >/dev/null 2>&1; then
+    check "$u" 0
+  elif systemctl list-unit-files "$u" >/dev/null 2>&1; then
+    printf "  ${y}PRESENT${n} %s (not enabled)\n" "$u"
+  else
+    check "$u" 1; missing_system=$((missing_system+1))
+  fi
+done
+# A greeter (any of these counts)
+if systemctl is-enabled sddm.service gdm.service greetd.service ly.service >/dev/null 2>&1; then
+  check "display manager (greeter)" 0
+else
+  check "display manager (greeter)" 1; missing_system=$((missing_system+1))
+fi
+
+# ------------------------------------------------------------------------------
+# Flatpaks
+# ------------------------------------------------------------------------------
+FLATPAKS=(
+  com.brave.Browser app.zen_browser.zen com.bitwarden.desktop org.keepassxc.KeePassXC
+  md.obsidian.Obsidian org.signal.Signal org.localsend.localsend_app
+  org.cryptomator.Cryptomator ch.protonmail.protonmail-bridge one.flipperzero.qFlipper
+  com.spotify.Client org.videolan.VLC com.calibre_ebook.calibre
+  io.github.flattool.Warehouse com.github.tchx84.Flatseal
+)
+section "Flatpaks"
+if have_cmd flatpak; then
+  installed="$(flatpak list --app --columns=application 2>/dev/null)"
+  for app in "${FLATPAKS[@]}"; do
+    if grep -qx "$app" <<<"$installed"; then check "$app" 0; else check "$app" 1; missing_system=$((missing_system+1)); fi
+  done
+else
+  printf "  ${r}flatpak not installed${n}\n"; missing_system=$((missing_system+1))
+fi
+
+# ------------------------------------------------------------------------------
+# User layer (only present after `mrrobot-setup`) — informational, not counted
+# ------------------------------------------------------------------------------
+USER_CMDS=( "mise:mise" "Homebrew:brew" "chezmoi:chezmoi" "Claude Code:claude"
+            "DevPod:devpod" "Goose:goose" "ripgrep:rg" "fzf:fzf" "lazygit:lazygit"
+            "update-all:update-all" "webapp:webapp" )
+section "User layer (run mrrobot-setup if these are missing)"
+for entry in "${USER_CMDS[@]}"; do
+  label="${entry%%:*}"; cmd="${entry##*:}"
+  if have_cmd "$cmd"; then check "$label" 0; else printf "  ${y}—${n}      %s (user layer)\n" "$label"; fi
+done
+
+# ------------------------------------------------------------------------------
+section "Summary"
+if [ "$missing_system" -eq 0 ]; then
+  printf "  ${g}${b}All system-layer items present.${n}\n"
+else
+  printf "  ${r}${b}%d system-layer item(s) missing — see above.${n}\n" "$missing_system"
+fi
+exit "$missing_system"
