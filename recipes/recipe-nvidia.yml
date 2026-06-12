@@ -18,7 +18,6 @@
         copr:
           - atim/starship
           - scottames/ghostty
-          - netbird/client
       install:
         packages:
           - terra-release
