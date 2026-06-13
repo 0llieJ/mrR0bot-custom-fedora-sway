@@ -1,0 +1,21 @@
+[Unit]
+Description=Force wlroots software rendering in a VM (so Sway/SwayFX starts)
+# systemd's built-in check: this unit only runs inside a virtual machine.
+ConditionVirtualization=vm
+# Run once; delete the marker to re-apply.
+ConditionPathExists=!/var/lib/mrrobot/vm-render.done
+# Apply before the greeter/compositor starts so the session inherits the vars.
+Before=display-manager.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/mkdir -p /var/lib/mrrobot
+# wlroots can't init EGL/DRI in a VM without 3D accel — fall back to the pixman
+# software renderer, and disable hardware cursors (VMs often lack them).
+ExecStart=/bin/sh -c 'grep -q "^WLR_RENDERER=" /etc/environment || echo "WLR_RENDERER=pixman" >> /etc/environment'
+ExecStart=/bin/sh -c 'grep -q "^WLR_NO_HARDWARE_CURSORS=" /etc/environment || echo "WLR_NO_HARDWARE_CURSORS=1" >> /etc/environment'
+ExecStart=/usr/bin/touch /var/lib/mrrobot/vm-render.done
+
+[Install]
+WantedBy=multi-user.target

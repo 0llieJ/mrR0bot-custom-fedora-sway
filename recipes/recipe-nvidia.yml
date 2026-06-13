@@ -161,4 +161,5 @@ modules:
         - clamav-freshclam.service
         - fstrim.timer
         - mrrobot-firewall.service
+        - mrrobot-vm-render.service
   - type: signing
