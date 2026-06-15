@@ -54,31 +54,31 @@ modules:
         # -- Option A: Noctalia shell --
         - noctalia-shell        # Noctalia (+noctalia-qs runtime), from Terra
         # -- Option B: classic Sway shell pieces (Noctalia replaces these) --
-        - waybar                #   status bar        (Noctalia replaces)
+        # - waybar                #   status bar        (Noctalia replaces)  (in base image)
         - mako                  #   notifications     (Noctalia replaces)
         - fuzzel                #   app launcher      (Noctalia replaces)
-        - swaylock              #   screen locker     (Noctalia replaces)
+        # - swaylock              #   screen locker     (Noctalia replaces)  (in base image)
         # --- low-level helpers Noctalia does NOT replace (keep for both) ------
-        - swayidle              # idle detection -> triggers the lock screen
-        - swaybg                # wallpaper
-        - kanshi                # display/output config
-        - grim
-        - slurp
+        # - swayidle              # idle detection -> triggers the lock screen  (in base image)
+        # - swaybg                # wallpaper  (in base image)
+        # - kanshi                # display/output config  (in base image)
+        # - grim   # in WayBlue base image
+        # - slurp   # in WayBlue base image
         - flameshot
-        - brightnessctl         # backend for Noctalia's brightness slider
-        - playerctl             # backend for Noctalia's media controls
-        - pamixer               # backend for Noctalia's volume slider
-        - wl-clipboard
-        - network-manager-applet
-        - blueman
+        # - brightnessctl         # backend for Noctalia's brightness slider  (in base image)
+        # - playerctl             # backend for Noctalia's media controls  (in base image)
+        # - pamixer               # backend for Noctalia's volume slider  (in base image)
+        # - wl-clipboard   # in WayBlue base image
+        # - network-manager-applet   # in WayBlue base image
+        # - blueman   # in WayBlue base image
         # --- file manager ----------------------------------------------------
-        - thunar
-        - thunar-volman
-        - tumbler
-        - gvfs
-        - udisks2
+        # - thunar   # in WayBlue base image
+        # - thunar-volman   # in WayBlue base image
+        # - tumbler   # in WayBlue base image
+        # - gvfs   # in WayBlue base image
+        # - udisks2   # in WayBlue base image
         # --- utilities & power -----------------------------------------------
-        - 7zip
+        # - 7zip   # in WayBlue base image
         # --- terminal fun ----------------------------------------------------
         - cowsay
         - cbonsai
@@ -87,33 +87,33 @@ modules:
         # --- fonts (Nerd Fonts come from install-nerdfonts.sh) ----------------
         - fira-code-fonts
         - jetbrains-mono-fonts
-        - fontawesome-6-free-fonts
+        # - fontawesome-6-free-fonts   # in WayBlue base image
         # --- containers ------------------------------------------------------
-        - podman
+        # - podman   # in WayBlue base image
         - podman-compose
-        - distrobox
+        # - distrobox   # in WayBlue base image
         # --- virtualization --------------------------------------------------
         - libvirt
         - virt-manager
         - virt-viewer
         - qemu-kvm
         # --- security / VPN --------------------------------------------------
-        - wireguard-tools
+        # - wireguard-tools   # in WayBlue base image
         - clamav
         - clamav-freshclam
         - pass
-        - gnome-keyring
+        # - gnome-keyring   # in WayBlue base image
         # --- hardware --------------------------------------------------------
         - solaar
         - logiops
         # --- smartcard / yubikey ---------------------------------------------
         - yubikey-manager
-        - gnupg2-scdaemon
-        - libatomic
-        - pcsc-lite
-        - pcsc-lite-ccid
+        # - gnupg2-scdaemon   # in WayBlue base image
+        # - libatomic   # in WayBlue base image
+        # - pcsc-lite   # in WayBlue base image
+        # - pcsc-lite-ccid   # in WayBlue base image
         - pam-u2f
-        - libfido2
+        # - libfido2   # in WayBlue base image
     remove:
       packages:
         - firefox

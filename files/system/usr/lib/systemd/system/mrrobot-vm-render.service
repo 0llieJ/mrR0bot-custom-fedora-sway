@@ -1,5 +1,5 @@
 [Unit]
-Description=Force wlroots software rendering in a VM (so Sway/SwayFX starts)
+Description=Force software GL rendering in a VM (so SwayFX starts)
 # systemd's built-in check: this unit only runs inside a virtual machine.
 ConditionVirtualization=vm
 # Run once; delete the marker to re-apply.
@@ -11,9 +11,11 @@ Before=display-manager.service
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/bin/mkdir -p /var/lib/mrrobot
-# wlroots can't init EGL/DRI in a VM without 3D accel — fall back to the pixman
-# software renderer, and disable hardware cursors (VMs often lack them).
-ExecStart=/bin/sh -c 'grep -q "^WLR_RENDERER=" /etc/environment || echo "WLR_RENDERER=pixman" >> /etc/environment'
+# SwayFX's fx_renderer is GLES/EGL-only (no pixman path), so in a VM with no 3D
+# accel we force Mesa's llvmpipe CPU renderer — that gives EGL a working context
+# without a GPU. (WLR_RENDERER=pixman does NOT work on SwayFX — it's ignored and
+# the EGL init still fails.) Also disable hardware cursors (VMs often lack them).
+ExecStart=/bin/sh -c 'grep -q "^LIBGL_ALWAYS_SOFTWARE=" /etc/environment || echo "LIBGL_ALWAYS_SOFTWARE=1" >> /etc/environment'
 ExecStart=/bin/sh -c 'grep -q "^WLR_NO_HARDWARE_CURSORS=" /etc/environment || echo "WLR_NO_HARDWARE_CURSORS=1" >> /etc/environment'
 ExecStart=/usr/bin/touch /var/lib/mrrobot/vm-render.done
 
